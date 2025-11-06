@@ -5,7 +5,7 @@ def main():
     char_count = analyze_unique_char_freq(words)
     possible_words = words
 
-    print("Welcome to Wordle Answer Bot!")
+    print("Welcome to WordMaster!")
     print("I will suggest guesses. After each guess, enter feedback as 5 characters:")
     print("G for green (correct letter, correct position)")
     print("Y for yellow (correct letter, wrong position)")

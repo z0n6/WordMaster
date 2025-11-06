@@ -1,4 +1,4 @@
-# Wordle Answer Bot
+# WordMaster
 
 This project is a Python-based assistant tool designed to help users solve Wordle puzzles more efficiently. It analyzes a vocabulary of 5-letter words, suggests optimal guesses based on character frequency, and narrows down possible answers using feedback from your Wordle attempts.
 
@@ -55,7 +55,7 @@ This project is a Python-based assistant tool designed to help users solve Wordl
 ### Example Session
 
 ```
-Welcome to Wordle Answer Bot!
+Welcome to WordMaster!
 I will suggest guesses. After each guess, enter feedback as 5 characters:
 G for green (correct letter, correct position)
 Y for yellow (correct letter, wrong position)
