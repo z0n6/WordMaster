@@ -11,6 +11,7 @@ def main():
     print("Y for yellow (correct letter, wrong position)")
     print("X for gray (letter not in word)")
     print("Example: GYXXG")
+    print("You can choose from suggested guesses or enter your own 5-letter word.")
     print()
 
     won = False
@@ -26,11 +27,14 @@ def main():
 
         guess = None
         while True:
-            choice = input("Choose a guess by number (1-10) or 'quit' to stop: ").strip()
+            choice = input("Choose a guess by number (1-10), enter a 5-letter word, or 'quit' to stop: ").strip()
             if choice.upper() == 'QUIT':
                 won = True  # to prevent printing possible words
                 break
             try:
+                if choice.isalpha() and len(choice) == 5:
+                    guess = choice.upper()
+                    break
                 choice_num = int(choice)
                 if 1 <= choice_num <= len(top_guesses):
                     guess = top_guesses[choice_num - 1]
