@@ -1,4 +1,4 @@
-from analyzer import *
+from utils import *
 
 def main():
     words = read_words()

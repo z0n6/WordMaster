@@ -76,7 +76,7 @@ Remaining possible words: 234
 ## Project Structure
 
 - `main.py`: Main entry point and interactive loop.
-- `analyzer.py`: Core logic for word analysis, scoring, and filtering.
+- `utils.py`: Core logic for word analysis, scoring, and filtering.
 - `data/vocabularies.csv`: List of valid 5-letter words.
 - `data/word_scores.csv`: Pre-computed word scores (generated if needed).
 - `data/char_freq.png`: Character frequency visualization (generated if needed).
