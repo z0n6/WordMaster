@@ -52,6 +52,14 @@ This project is a Python-based assistant tool designed to help users solve Wordl
 
 5. **Quitting**: Type `quit` at any prompt to exit.
 
+### Playing Wordle (Practice Mode)
+
+For practice or to play Wordle without the assistant:
+
+1. Run `python play_wordle.py` (after setting up the environment).
+2. Guess 5-letter words and receive feedback.
+3. Use `--quiet` flag for minimal output (useful for scripting).
+
 ### Example Session
 
 ```
@@ -75,7 +83,8 @@ Remaining possible words: 234
 
 ## Project Structure
 
-- `main.py`: Main entry point and interactive loop.
+- `main.py`: Main entry point for the Wordle assistant and interactive loop.
+- `play_wordle.py`: Standalone Wordle game simulator for practice.
 - `utils.py`: Core logic for word analysis, scoring, and filtering.
 - `data/vocabularies.csv`: List of valid 5-letter words.
 - `data/word_scores.csv`: Pre-computed word scores (generated if needed).
