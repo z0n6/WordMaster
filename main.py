@@ -1,6 +1,12 @@
+import argparse
 from utils import *
 
 def main():
+    parser = argparse.ArgumentParser(description='WordMaster: A Wordle assistant')
+    parser.add_argument('--num_suggestions', type=int, default=10, help='Number of suggestion guesses to show (default: 10)')
+    args = parser.parse_args()
+    num_suggestions = args.num_suggestions
+
     words = read_words()
     char_count = analyze_unique_char_freq(words)
     possible_words = words
@@ -20,14 +26,14 @@ def main():
             print("No possible words left!")
             break
 
-        top_guesses = get_top_guesses(possible_words, char_count, 10)
+        top_guesses = get_top_guesses(possible_words, char_count, num_suggestions)
         print(f"Attempt {attempt}: Top suggested guesses:")
         for i, guess in enumerate(top_guesses, 1):
             print(f"{i}. {guess}")
 
         guess = None
         while True:
-            choice = input("Choose a guess by number (1-10), enter a 5-letter word, or 'quit' to stop: ").strip()
+            choice = input(f"Choose a guess by number (1-{num_suggestions}), enter a 5-letter word, or 'quit' to stop: ").strip()
             if choice.upper() == 'QUIT':
                 won = True  # to prevent printing possible words
                 break
