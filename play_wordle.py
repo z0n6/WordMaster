@@ -1,4 +1,5 @@
 import random
+import argparse
 from utils import read_words
 
 def get_feedback(secret, guess):
@@ -20,13 +21,19 @@ def get_feedback(secret, guess):
     return ''.join(feedback)
 
 def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--quiet', action='store_true', help='Run in quiet mode')
+    args = parser.parse_args()
+
     words = read_words()
     secret = random.choice(words)
-    print("Welcome to Wordle!")
-    print("Guess the 5-letter word in 6 tries.")
-    print("Feedback: G=green (correct position), Y=yellow (wrong position), X=gray (not in word)")
+    if not args.quiet:
+        print("Welcome to Wordle!")
+        print("Guess the 5-letter word in 6 tries.")
+        print("Feedback: G=green (correct position), Y=yellow (wrong position), X=gray (not in word)")
     for attempt in range(1, 7):
-        guess = input(f"Attempt {attempt}: Enter a 5-letter word: ").strip().upper()
+        prompt = "" if args.quiet else f"Attempt {attempt}: Enter a 5-letter word: "
+        guess = input(prompt).strip().upper()
         if len(guess) != 5 or not guess.isalpha():
             print("Please enter a 5-letter word.")
             continue
@@ -34,12 +41,14 @@ def main():
             print("Word not in vocabulary.")
             continue
         feedback = get_feedback(secret, guess)
-        print(f"Feedback: {feedback}")
+        print(feedback) if args.quiet else print(f"Feedback: {feedback}")
         if feedback == 'GGGGG':
-            print("Congratulations! You guessed it!")
+            if not args.quiet:
+                print("Congratulations! You guessed it!")
             break
     else:
-        print(f"Sorry, the word was {secret}")
+        if not args.quiet:
+            print(f"Sorry, the word was {secret}")
 
 if __name__ == "__main__":
     main()
