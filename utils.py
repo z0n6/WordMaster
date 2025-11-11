@@ -42,6 +42,20 @@ def score_words(words, char_count):
     word_scores.sort(key=lambda x: x[1], reverse=True)
     return word_scores
 
+def score_words_with_repeat_characters(words, char_count):
+    word_scores = []
+    for word in words:
+        count = Counter(word.lower())
+        score = 0
+        while count.most_common()[0][1] > 1:
+            char, times = count.most_common()[0]
+            score += char_count[char*times]
+            count[char] -= 1
+        score = sum(char_count[char.lower()] for char in count.keys())
+        word_scores.append((word, score))
+    word_scores.sort(key=lambda x: x[1], reverse=True)
+    return word_scores
+
 def print_word_scores(word_scores, top_n=20):
     print(f"Top {top_n} words by score:")
     for word, score in word_scores[:top_n]:
@@ -109,3 +123,18 @@ def get_top_guesses(words, char_count, top_n=10):
         return []
     word_scores = score_words(words, char_count)
     return [word for word, score in word_scores[:top_n]]
+
+def get_top_guesses_with_repeat(words, char_count, top_n=10):
+    """
+    Get the top n highest scored words from the list.
+    """
+    if not words:
+        return []
+    word_scores = score_words_with_repeat_characters(words, char_count)
+    return [word for word, score in word_scores[:top_n]]
+
+if __name__ == "__main__":
+    words = read_words()
+    char_count = analyze_repeat_char_freq(words)
+    word_scores = score_words_with_repeat_characters(words, char_count)
+    save_word_scores(word_scores)

@@ -10,7 +10,7 @@ def main():
     quiet = args.quiet
 
     words = read_words()
-    char_count = analyze_unique_char_freq(words)
+    char_count = analyze_repeat_char_freq(words)
     possible_words = words
 
     if not quiet:
