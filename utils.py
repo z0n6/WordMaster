@@ -1,6 +1,5 @@
 import csv
 from collections import Counter
-import matplotlib.pyplot as plt
 
 def read_words(filename='data/vocabularies.csv'):
     with open(filename, 'r') as f:
@@ -16,21 +15,24 @@ def analyze_char_freq(words):
             char_count[char] += 1
     return char_count
 
+def analyze_repeat_char_freq(words):
+    char_count = Counter()
+    for word in words:
+        count = Counter(word.lower())
+        while count.most_common()[0][1] > 1:
+            char, times = count.most_common()[0]
+            count[char] -= 1
+            count[char*times] += 1
+        char_count.update(count)
+    
+    return char_count
+
 def analyze_unique_char_freq(words):
     char_count = Counter()
     for word in words:
         for char in set(word.lower()):
             char_count[char] += 1
     return char_count
-
-def plot_char_freq(char_count, output_file='data/char_freq.png'):
-    sorted_char_count = sorted(char_count.items(), key=lambda x: x[1], reverse=True)
-    sorted_chars, sorted_freqs = zip(*sorted_char_count)
-    plt.bar(sorted_chars, sorted_freqs)
-    plt.xlabel('Characters')
-    plt.ylabel('Frequency')
-    plt.title('Character Frequency in Vocabularies')
-    plt.savefig(output_file)
 
 def score_words(words, char_count):
     word_scores = []

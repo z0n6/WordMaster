@@ -12,7 +12,7 @@ source venv/bin/activate
 pip install -r requirements.txt
 
 # Run the program
-python3 main.py $@
+python3 plot.py $@
 
 # Deactivate the virtual environment
 deactivate
