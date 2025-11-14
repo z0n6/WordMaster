@@ -18,13 +18,10 @@ def analyze_char_freq(words):
 def analyze_repeat_char_freq(words):
     char_count = Counter()
     for word in words:
-        count = Counter(word.lower())
-        while count.most_common()[0][1] > 1:
-            char, times = count.most_common()[0]
-            count[char] -= 1
-            count[char*times] += 1
-        char_count.update(count)
-    
+        word_char_count = Counter(word.lower())
+        for char, freq in word_char_count.items():
+            for f in range(1, 1 + freq):
+                char_count[char * f] += 1
     return char_count
 
 def analyze_unique_char_freq(words):
@@ -45,13 +42,11 @@ def score_words(words, char_count):
 def score_words_with_repeat_characters(words, char_count):
     word_scores = []
     for word in words:
-        count = Counter(word.lower())
+        word_char_count = Counter(word.lower())
         score = 0
-        while count.most_common()[0][1] > 1:
-            char, times = count.most_common()[0]
-            score += char_count[char*times]
-            count[char] -= 1
-        score = sum(char_count[char.lower()] for char in count.keys())
+        for char, freq in word_char_count.items():
+            for f in range(1, 1 + freq):
+                score += char_count[char * f]
         word_scores.append((word, score))
     word_scores.sort(key=lambda x: x[1], reverse=True)
     return word_scores
@@ -112,7 +107,7 @@ def get_best_guess(words, char_count):
     """
     if not words:
         return None
-    word_scores = score_words(words, char_count)
+    word_scores = score_words_with_repeat_characters(words, char_count)
     return word_scores[0][0]
 
 def get_top_guesses(words, char_count, top_n=10):
@@ -121,7 +116,7 @@ def get_top_guesses(words, char_count, top_n=10):
     """
     if not words:
         return []
-    word_scores = score_words(words, char_count)
+    word_scores = score_words_with_repeat_characters(words, char_count)
     return [word for word, score in word_scores[:top_n]]
 
 def get_top_guesses_with_repeat(words, char_count, top_n=10):
@@ -133,7 +128,30 @@ def get_top_guesses_with_repeat(words, char_count, top_n=10):
     word_scores = score_words_with_repeat_characters(words, char_count)
     return [word for word, score in word_scores[:top_n]]
 
+def test_scoring_logic():
+    # Test data
+    test_words = ['hello', 'world', 'test', 'aa', 'bb']
+    char_count = analyze_repeat_char_freq(test_words)
+    
+    # Test scoring
+    scores = score_words_with_repeat_characters(test_words, char_count)
+    
+    # Assertions
+    assert len(scores) == len(test_words)
+    # 'hello' has 'll', 'aa' has 'aa', etc.
+    # Check that scores are calculated correctly
+    for word, score in scores:
+        word_char_count = Counter(word.lower())
+        expected_score = 0
+        for char, freq in word_char_count.items():
+            for f in range(1, freq + 1):
+                expected_score += char_count[char * f]
+        assert score == expected_score, f"Score mismatch for {word}: got {score}, expected {expected_score}"
+    
+    print("All scoring tests passed!")
+
 if __name__ == "__main__":
+    test_scoring_logic()
     words = read_words()
     char_count = analyze_repeat_char_freq(words)
     word_scores = score_words_with_repeat_characters(words, char_count)
