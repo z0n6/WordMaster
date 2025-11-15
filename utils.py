@@ -143,8 +143,16 @@ class WordleHelper:
                         valid = False
                         break
                 elif feedback[i] == 'X':
-                    if guess[i] in word and feedback[word.index(guess[i])] != 'G':
+                    if word[i] == guess[i]:
                         valid = False
+                        break
+                    for j in range(5):
+                        if i == j:
+                            continue
+                        if word[j] == guess[i] and feedback[j] != 'G':
+                            valid = False
+                            break
+                    if not valid:
                         break
             if not valid:
                 continue
