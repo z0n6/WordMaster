@@ -1,6 +1,6 @@
 import random
 import argparse
-from utils import read_words
+from utils import WordleHelper
 
 def get_feedback(secret, guess):
     feedback = ['X'] * 5
@@ -25,7 +25,7 @@ def main():
     parser.add_argument('--quiet', action='store_true', help='Run in quiet mode')
     args = parser.parse_args()
 
-    words = read_words()
+    words = WordleHelper.read_words()
     secret = random.choice(words)
     if not args.quiet:
         print("Welcome to Wordle!")
