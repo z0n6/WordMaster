@@ -143,16 +143,8 @@ class WordleHelper:
                         valid = False
                         break
                 elif feedback[i] == 'X':
-                    if word[i] == guess[i]:
+                    if word[i] == guess[i] or any(word[j] == guess[i] and feedback[j] != 'G' for j in range(5) if j != i):
                         valid = False
-                        break
-                    for j in range(5):
-                        if i == j:
-                            continue
-                        if word[j] == guess[i] and feedback[j] != 'G':
-                            valid = False
-                            break
-                    if not valid:
                         break
             if not valid:
                 continue
