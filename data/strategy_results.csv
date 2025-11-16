@@ -1,0 +1,13 @@
+Strategy,Total Games,Successful Games,1 Guess,2 Guesses,3 Guesses,4 Guesses,5 Guesses,6 Guesses,Failed,Success Rate (%),Avg Guesses (Successful)
+Total Frequency (Best),2333,2307,1,130,921,928,270,57,26,98.89,3.65
+Total Frequency (Random Top 3),2333,2293,0,130,892,906,310,55,40,98.29,3.68
+Total Frequency (Random Top 5),2333,2272,1,103,872,916,299,81,61,97.39,3.73
+Total Frequency (Random Top 10),2333,2264,1,125,843,877,315,103,69,97.04,3.75
+Repeat Frequency (Best),2333,2281,1,123,913,911,272,61,52,97.77,3.66
+Repeat Frequency (Random Top 3),2333,2244,0,125,890,883,277,69,89,96.19,3.68
+Repeat Frequency (Random Top 5),2333,2240,1,134,899,838,295,73,93,96.01,3.67
+Repeat Frequency (Random Top 10),2333,2232,2,132,843,861,307,87,101,95.67,3.72
+Unique Frequency (Best),2333,2310,1,123,924,910,282,70,23,99.01,3.67
+Unique Frequency (Random Top 3),2333,2292,0,106,867,979,279,61,41,98.24,3.7
+Unique Frequency (Random Top 5),2333,2283,0,116,873,896,319,79,50,97.86,3.72
+Unique Frequency (Random Top 10),2333,2246,0,123,832,916,298,77,87,96.27,3.72

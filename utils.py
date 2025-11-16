@@ -7,7 +7,7 @@ FREQ_REPEAT = 'repeat'
 FREQ_UNIQUE = 'unique'
 
 class WordleHelper:
-    def __init__(self, words=None, mode=FREQ_REPEAT):
+    def __init__(self, words=None, mode=FREQ_UNIQUE):
         if words is None:
             self.words = self.read_words()
         else:
@@ -99,11 +99,16 @@ class WordleHelper:
         import matplotlib.pyplot as plt
         sorted_char_count = sorted(self.char_count.items(), key=lambda x: x[1], reverse=True)
         sorted_chars, sorted_freqs = zip(*sorted_char_count)
+        plt.figure(figsize=(16, 6))
+        if any(len(key) > 1 for key in sorted_chars):
+            plt.xticks(rotation=45, ha='center')
         plt.bar(sorted_chars, sorted_freqs)
         plt.xlabel('Characters')
         plt.ylabel('Frequency')
         plt.title('Character Frequency in Vocabularies')
+        plt.tight_layout()
         plt.savefig(output_file)
+        plt.close()
 
     @staticmethod
     def save_word_scores(word_scores, filename='data/word_scores.csv'):

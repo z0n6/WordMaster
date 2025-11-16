@@ -9,10 +9,10 @@ fi
 source venv/bin/activate
 
 # Install dependencies
-pip install -r requirements.txt
+pip install -r requirements.txt > /dev/null 2>&1
 
 # Run the program
-python3 plot.py $@
+python3 $@
 
 # Deactivate the virtual environment
 deactivate
