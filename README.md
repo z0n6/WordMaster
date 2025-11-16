@@ -14,26 +14,21 @@ This project is a Python-based assistant tool designed to help users solve Wordl
 ### Prerequisites
 
 - Python 3.x
-- `matplotlib` library (automatically installed via requirements.txt)
+- `matplotlib` library (only required for plotting functionality)
 
 ### Installation and Setup
 
 1. Clone or download this project to your local machine.
 2. Navigate to the project directory.
-3. Run the setup script:
+3. (Optional) Install dependencies for plotting functionality:
 
-   ```bash
-   ./run.sh
-   ```
-
-   This will:
-   - Create a Python virtual environment (if it doesn't exist)
-   - Install required dependencies
-   - Launch the Wordle Answer Bot
+    ```bash
+    pip install -r requirements.txt
+    ```
 
 ### Playing with the Bot
 
-1. **Start the Program**: Run `./run.sh` or activate the virtual environment and run `python main.py`.
+1. **Start the Program**: Run `python main.py`.
 
 2. **Understand Feedback Codes**:
    - `G`: Green - Correct letter in correct position
@@ -86,11 +81,12 @@ Remaining possible words: 234
 - `main.py`: Main entry point for the Wordle assistant and interactive loop.
 - `play_wordle.py`: Standalone Wordle game simulator for practice.
 - `utils.py`: Core logic for word analysis, scoring, and filtering.
+- `plot.py`: Script to generate character frequency plots.
+- `plot.sh`: Script to set up environment and run plot.py.
 - `data/vocabularies.csv`: List of valid 5-letter words.
 - `data/word_scores.csv`: Pre-computed word scores (generated if needed).
 - `data/char_freq.png`: Character frequency visualization (generated if needed).
 - `requirements.txt`: Python dependencies.
-- `run.sh`: Setup and run script.
 
 ## How It Works
 
