@@ -101,3 +101,8 @@ Remaining possible words: 234
 
 This approach maximizes information gained per guess, helping you solve Wordle in fewer attempts.
 
+## TODO
+
+- Analyze strategies of word guessing
+- Make a GUI for both helper and game playing
+
