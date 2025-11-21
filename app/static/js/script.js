@@ -98,6 +98,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 data.suggestions.forEach(suggestion => {
                     const li = document.createElement('li');
                     li.textContent = suggestion;
+                    li.style.cursor = 'pointer';
+                    li.addEventListener('click', function() {
+                        guessInput.value = suggestion;
+                        submitGuess();
+                    });
                     suggestionList.appendChild(li);
                 });
             });

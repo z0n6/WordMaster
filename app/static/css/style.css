@@ -99,4 +99,10 @@ button {
     margin: 5px 0;
     padding: 5px;
     border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+#suggestion-list li:hover {
+    background-color: #d0d0d0;
 }
