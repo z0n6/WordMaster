@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WordMaster - Wordle Game</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>WordMaster</h1>
+        <div id="game-board">
+            <!-- 6 rows for attempts -->
+            <div class="row" id="row-0">
+                <div class="letter"></div>
+                <div class="letter"></div>
+                <div class="letter"></div>
+                <div class="letter"></div>
+                <div class="letter"></div>
+            </div>
+            <div class="row" id="row-1">
+                <div class="letter"></div>
+                <div class="letter"></div>
+                <div class="letter"></div>
+                <div class="letter"></div>
+                <div class="letter"></div>
+            </div>
+            <div class="row" id="row-2">
+                <div class="letter"></div>
+                <div class="letter"></div>
+                <div class="letter"></div>
+                <div class="letter"></div>
+                <div class="letter"></div>
+            </div>
+            <div class="row" id="row-3">
+                <div class="letter"></div>
+                <div class="letter"></div>
+                <div class="letter"></div>
+                <div class="letter"></div>
+                <div class="letter"></div>
+            </div>
+            <div class="row" id="row-4">
+                <div class="letter"></div>
+                <div class="letter"></div>
+                <div class="letter"></div>
+                <div class="letter"></div>
+                <div class="letter"></div>
+            </div>
+            <div class="row" id="row-5">
+                <div class="letter"></div>
+                <div class="letter"></div>
+                <div class="letter"></div>
+                <div class="letter"></div>
+                <div class="letter"></div>
+            </div>
+        </div>
+        <div id="input-section">
+            <input type="text" id="guess-input" maxlength="5" placeholder="Enter 5-letter word">
+            <button id="submit-guess">Guess</button>
+            <button id="new-game">New Game</button>
+        </div>
+        <div id="message"></div>
+        <div id="suggestions">
+            <h3>Suggestions:</h3>
+            <ul id="suggestion-list"></ul>
+        </div>
+    </div>
+    <script src="/static/js/script.js"></script>
+</body>
+</html>
