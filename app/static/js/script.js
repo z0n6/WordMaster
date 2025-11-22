@@ -3,6 +3,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const suggestionList = document.getElementById('suggestion-list');
     let currentRow = 0;
     let currentCol = 0;
+    let suggestionsOffset = 0;
 
     function startNewGame() {
         fetch('/new_game', { method: 'POST' })
@@ -98,7 +99,8 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function updateSuggestions() {
-        fetch('/suggestions')
+        suggestionsOffset = 0;
+        fetch(`/suggestions?offset=${suggestionsOffset}&limit=10`)
             .then(response => response.json())
             .then(data => {
                 suggestionList.innerHTML = '';
@@ -112,6 +114,47 @@ document.addEventListener('DOMContentLoaded', function() {
                     });
                     suggestionList.appendChild(li);
                 });
+                if (data.suggestions.length >= 10 && data.count > 10) {
+                    const moreLi = document.createElement('li');
+                    moreLi.textContent = '---more---';
+                    moreLi.style.cursor = 'pointer';
+                    moreLi.style.textAlign = 'center';
+                    moreLi.style.fontWeight = 'bold';
+                    moreLi.addEventListener('click', loadMoreSuggestions);
+                    suggestionList.appendChild(moreLi);
+                }
+                document.querySelector('#suggestions summary').textContent = `Suggestions (${data.count})`;
+            });
+    }
+
+    function loadMoreSuggestions() {
+        suggestionsOffset += 10;
+        fetch(`/suggestions?offset=${suggestionsOffset}&limit=10`)
+            .then(response => response.json())
+            .then(data => {
+                const moreLi = suggestionList.querySelector('li:last-child');
+                if (moreLi && moreLi.textContent === '---more---') {
+                    moreLi.remove();
+                }
+                data.suggestions.forEach(suggestion => {
+                    const li = document.createElement('li');
+                    li.textContent = suggestion;
+                    li.style.cursor = 'pointer';
+                    li.addEventListener('click', function() {
+                        fillRowWithSuggestion(suggestion);
+                        submitGuess();
+                    });
+                    suggestionList.appendChild(li);
+                });
+                if (data.suggestions.length >= 10 && suggestionsOffset + 10 < data.count) {
+                    const moreLi = document.createElement('li');
+                    moreLi.textContent = '---more---';
+                    moreLi.style.cursor = 'pointer';
+                    moreLi.style.textAlign = 'center';
+                    moreLi.style.fontWeight = 'bold';
+                    moreLi.addEventListener('click', loadMoreSuggestions);
+                    suggestionList.appendChild(moreLi);
+                }
             });
     }
 

@@ -53,15 +53,19 @@ def guess():
 @app.route('/suggestions', methods=['GET'])
 def suggestions():
     if 'secret' not in session or session.get('won') or session.get('lost'):
-        return jsonify({'suggestions': []})
+        return jsonify({'suggestions': [], 'count': 0})
+
+    offset = int(request.args.get('offset', 0))
+    limit = int(request.args.get('limit', 10))
 
     helper = WordleHelper()
     # Filter based on previous attempts
     for attempt in session['attempts']:
         helper.filter_words(attempt['guess'], attempt['feedback'])
 
-    suggestions = helper.get_top_guesses(10)
-    return jsonify({'suggestions': suggestions})
+    all_suggestions = helper.get_top_guesses(len(helper.words))  # Get all to slice
+    suggestions = all_suggestions[offset:offset + limit]
+    return jsonify({'suggestions': suggestions, 'count': len(helper.words)})
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=8000, debug=True)
