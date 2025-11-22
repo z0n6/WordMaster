@@ -40,12 +40,15 @@ def guess():
     elif len(session['attempts']) >= 6:
         session['lost'] = True
 
-    return jsonify({
+    response = {
         'feedback': feedback,
         'won': session.get('won', False),
         'lost': session.get('lost', False),
         'attempts': session['attempts']
-    })
+    }
+    if session.get('lost', False):
+        response['secret'] = secret
+    return jsonify(response)
 
 @app.route('/suggestions', methods=['GET'])
 def suggestions():

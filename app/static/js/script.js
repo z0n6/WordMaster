@@ -1,10 +1,8 @@
 document.addEventListener('DOMContentLoaded', function() {
-    const guessInput = document.getElementById('guess-input');
-    const submitButton = document.getElementById('submit-guess');
-    const newGameButton = document.getElementById('new-game');
     const messageDiv = document.getElementById('message');
     const suggestionList = document.getElementById('suggestion-list');
     let currentRow = 0;
+    let currentCol = 0;
 
     function startNewGame() {
         fetch('/new_game', { method: 'POST' })
@@ -12,7 +10,8 @@ document.addEventListener('DOMContentLoaded', function() {
             .then(data => {
                 if (data.status === 'new_game') {
                     resetBoard();
-                    messageDiv.textContent = '';
+                    messageDiv.innerHTML = '';
+                    document.getElementById('new-game-container').innerHTML = '';
                     updateSuggestions();
                 }
             });
@@ -28,13 +27,17 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         }
         currentRow = 0;
-        guessInput.value = '';
-        guessInput.disabled = false;
-        submitButton.disabled = false;
+        currentCol = 0;
     }
 
     function submitGuess() {
-        const guess = guessInput.value.trim().toUpperCase();
+        const row = document.getElementById(`row-${currentRow}`);
+        const letters = row.querySelectorAll('.letter');
+        let guess = '';
+        for (let i = 0; i < 5; i++) {
+            guess += letters[i].textContent;
+        }
+        guess = guess.trim().toUpperCase();
         if (guess.length !== 5) {
             messageDiv.textContent = 'Please enter a 5-letter word.';
             return;
@@ -58,12 +61,18 @@ document.addEventListener('DOMContentLoaded', function() {
             updateBoard(data.feedback);
             if (data.won) {
                 messageDiv.textContent = 'Congratulations! You won!';
-                guessInput.disabled = true;
-                submitButton.disabled = true;
+                const newGameBtn = document.createElement('button');
+                newGameBtn.id = 'new-game-btn';
+                newGameBtn.textContent = 'New Game';
+                newGameBtn.addEventListener('click', startNewGame);
+                document.getElementById('new-game-container').appendChild(newGameBtn);
             } else if (data.lost) {
-                messageDiv.textContent = 'Game over! The word was ' + data.attempts[data.attempts.length - 1].guess;
-                guessInput.disabled = true;
-                submitButton.disabled = true;
+                messageDiv.textContent = 'Game over! The word was ' + data.secret;
+                const newGameBtn = document.createElement('button');
+                newGameBtn.id = 'new-game-btn';
+                newGameBtn.textContent = 'New Game';
+                newGameBtn.addEventListener('click', startNewGame);
+                document.getElementById('new-game-container').appendChild(newGameBtn);
             } else {
                 messageDiv.textContent = '';
             }
@@ -75,9 +84,7 @@ document.addEventListener('DOMContentLoaded', function() {
     function updateBoard(feedback) {
         const row = document.getElementById(`row-${currentRow}`);
         const letters = row.querySelectorAll('.letter');
-        const guess = guessInput.value.trim().toUpperCase();
         for (let i = 0; i < 5; i++) {
-            letters[i].textContent = guess[i];
             if (feedback[i] === 'G') {
                 letters[i].classList.add('correct');
             } else if (feedback[i] === 'Y') {
@@ -87,7 +94,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }
         currentRow++;
-        guessInput.value = '';
+        currentCol = 0;
     }
 
     function updateSuggestions() {
@@ -100,7 +107,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     li.textContent = suggestion;
                     li.style.cursor = 'pointer';
                     li.addEventListener('click', function() {
-                        guessInput.value = suggestion;
+                        fillRowWithSuggestion(suggestion);
                         submitGuess();
                     });
                     suggestionList.appendChild(li);
@@ -108,11 +115,30 @@ document.addEventListener('DOMContentLoaded', function() {
             });
     }
 
-    submitButton.addEventListener('click', submitGuess);
-    newGameButton.addEventListener('click', startNewGame);
-    guessInput.addEventListener('keypress', function(e) {
+    function fillRowWithSuggestion(suggestion) {
+        const row = document.getElementById(`row-${currentRow}`);
+        const letters = row.querySelectorAll('.letter');
+        for (let i = 0; i < 5; i++) {
+            letters[i].textContent = suggestion[i].toUpperCase();
+        }
+        currentCol = 5;
+    }
+
+    document.addEventListener('keydown', function(e) {
+        if (currentRow >= 6) return; // Game over
+        const row = document.getElementById(`row-${currentRow}`);
+        const letters = row.querySelectorAll('.letter');
+
         if (e.key === 'Enter') {
             submitGuess();
+        } else if (e.key === 'Backspace') {
+            if (currentCol > 0) {
+                currentCol--;
+                letters[currentCol].textContent = '';
+            }
+        } else if (e.key.length === 1 && e.key.match(/[a-zA-Z]/) && currentCol < 5) {
+            letters[currentCol].textContent = e.key.toUpperCase();
+            currentCol++;
         }
     });
 
