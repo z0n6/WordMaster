@@ -4,6 +4,7 @@ document.addEventListener('DOMContentLoaded', function() {
     let currentRow = 0;
     let currentCol = 0;
     let suggestionsOffset = 0;
+    let gameOver = false;
 
     function startNewGame() {
         fetch('/new_game', { method: 'POST' })
@@ -13,6 +14,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     resetBoard();
                     messageDiv.innerHTML = '';
                     document.getElementById('new-game-container').innerHTML = '';
+                    gameOver = false;
+                    document.getElementById('keyboard').classList.remove('disabled');
                     updateSuggestions();
                 }
             });
@@ -67,6 +70,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 newGameBtn.textContent = 'New Game';
                 newGameBtn.addEventListener('click', startNewGame);
                 document.getElementById('new-game-container').appendChild(newGameBtn);
+                gameOver = true;
+                document.getElementById('keyboard').classList.add('disabled');
             } else if (data.lost) {
                 messageDiv.textContent = 'Game over! The word was ' + data.secret;
                 const newGameBtn = document.createElement('button');
@@ -74,6 +79,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 newGameBtn.textContent = 'New Game';
                 newGameBtn.addEventListener('click', startNewGame);
                 document.getElementById('new-game-container').appendChild(newGameBtn);
+                gameOver = true;
+                document.getElementById('keyboard').classList.add('disabled');
             } else {
                 messageDiv.textContent = '';
             }
@@ -165,22 +172,34 @@ document.addEventListener('DOMContentLoaded', function() {
         currentCol = 5;
     }
 
-    document.addEventListener('keydown', function(e) {
-        if (currentRow >= 6) return; // Game over
+    function handleKeyPress(key) {
+        if (gameOver) return;
         const row = document.getElementById(`row-${currentRow}`);
         const letters = row.querySelectorAll('.letter');
 
-        if (e.key === 'Enter') {
+        if (key === 'Enter') {
             submitGuess();
-        } else if (e.key === 'Backspace') {
+        } else if (key === 'Backspace') {
             if (currentCol > 0) {
                 currentCol--;
                 letters[currentCol].textContent = '';
             }
-        } else if (e.key.length === 1 && e.key.match(/[a-zA-Z]/) && currentCol < 5) {
-            letters[currentCol].textContent = e.key.toUpperCase();
+        } else if (key.length === 1 && key.match(/[a-zA-Z]/) && currentCol < 5) {
+            letters[currentCol].textContent = key.toUpperCase();
             currentCol++;
         }
+    }
+
+    document.addEventListener('keydown', function(e) {
+        handleKeyPress(e.key);
+    });
+
+    // Add click event listeners for virtual keyboard
+    document.querySelectorAll('.key').forEach(button => {
+        button.addEventListener('click', function() {
+            const key = this.getAttribute('data-key');
+            handleKeyPress(key);
+        });
     });
 
     // Start a new game on load
