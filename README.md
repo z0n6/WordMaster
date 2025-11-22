@@ -9,188 +9,48 @@ This project is a Python-based assistant tool designed to help users solve Wordl
 - **Word Scoring System**: Scores words by the uniqueness and frequency of their letters to prioritize informative guesses.
 - **Comprehensive Vocabulary**: Uses a large dataset of valid 5-letter words.
 
-## How to Use
+## Quick Start
 
-### Prerequisites
+For detailed usage instructions, see [docs/usage.md](docs/usage.md).
 
-- Python 3.x
-- `matplotlib` library (only required for plotting functionality)
+## Analysis
 
-### Installation and Setup
+View strategy analysis results in [docs/analysis.md](docs/analysis.md).
 
-1. Clone or download this project to your local machine.
-2. Navigate to the project directory.
-3. (Optional) Install dependencies for plotting functionality:
+## Example
 
-    ```bash
-    pip install -r requirements.txt
-    ```
-
-### Playing with the Bot
-
-1. **Start the Program**: Run `python main.py`.
-
-2. **Understand Feedback Codes**:
-   - `G`: Green - Correct letter in correct position
-   - `Y`: Yellow - Correct letter in wrong position
-   - `X`: Gray - Letter not in the word
-
-3. **Gameplay Loop**:
-   - The bot displays the top 10 suggested guesses.
-   - Choose a guess by entering its number (1-10).
-   - Play that word on Wordle.
-   - Enter the feedback as a 5-character string (e.g., `GYXXG`).
-   - The bot filters possible words and suggests new guesses.
-   - Repeat until you win or run out of attempts.
-
-4. **Winning**: If you enter `GGGGG`, the bot congratulates you.
-
-5. **Quitting**: Type `quit` at any prompt to exit.
-
-### Playing Wordle (Practice Mode)
-
-For practice or to play Wordle without the assistant:
-
-1. Run `python play_wordle.py` (after setting up the environment).
-2. Guess 5-letter words and receive feedback.
-3. Use `--quiet` flag for minimal output (useful for scripting).
-
-### Web Interface
-
-WordMaster also provides a web-based Wordle game with integrated assistant suggestions.
-
-#### Features
-
-- **Interactive Game Board**: Visual Wordle grid with color-coded feedback (green for correct position, yellow for correct letter wrong position, gray for incorrect).
-- **Virtual Keyboard**: On-screen keyboard that updates with letter statuses.
-- **Assistant Suggestions**: Get top word suggestions based on remaining possibilities, accessible via a collapsible suggestions panel.
-- **Session Management**: Start new games and track attempts.
-
-#### Running the Web App
-
-**Using Docker (Recommended):**
-
-1. Ensure Docker and Docker Compose are installed.
-2. Navigate to the project root directory.
-3. Run `docker-compose up --build`.
-4. Open your browser and go to `http://localhost:8000`.
-
-**Running Directly:**
-
-1. Navigate to the `app/` directory.
-2. Install dependencies: `pip install -r requirements.txt`.
-3. Run the Flask app: `python app.py`.
-4. Open your browser and go to `http://localhost:8000`.
-
-#### How to Play
-
-1. Click "New Game" to start.
-2. Type your guess using the on-screen keyboard or your physical keyboard.
-3. Press Enter to submit.
-4. View the colored feedback on the game board.
-5. Check the "Suggestions" panel for assistant recommendations for your next guess.
-6. Continue until you win or reach 6 attempts.
-
-### Analyzing Strategies
-
-To analyze different word guessing strategies:
-
-1. Run `python analyze_strategies.py`.
-2. The script simulates all strategies against the full vocabulary and saves results to `data/strategy_results.csv`.
-3. Strategies include variations based on frequency scoring (Total, Repeat, Unique) and selection methods (Best guess vs. Random from top N).
-
-### Plotting Results
-
-To visualize strategy performance:
-
-1. Ensure `matplotlib` is installed (`pip install -r requirements.txt`).
-2. Run `python plot_strategies.py`.
-3. The script generates line charts for success rates and failed games, saved as `data/success_rates_line.png` and `data/failed_games_line.png`.
-
-## Analysis Results
-
-The strategy analysis simulates all possible Wordle games using different guessing strategies based on character frequency scoring modes (Total, Repeat, Unique) and selection methods (Best guess vs. Random from top N).
-
-### Success Rates by Strategy
-![Success Rates](data/success_rates_line.png)
-
-This chart shows success rates across strategies. The Unique Frequency (Best) strategy achieves the highest success rate at 99.01%, while random selection from top guesses slightly reduces performance.
-
-### Failed Games by Strategy
-![Failed Games](data/failed_games_line.png)
-
-The number of failed games (unable to solve in 6 attempts) is lowest for the Unique Frequency (Best) strategy with only 23 failures.
-
-### Average Guesses by Strategy
-![Average Guesses](data/average_guesses_line.png)
-
-Average guesses for successful games is around 3.65-3.75 across strategies, with the Unique Frequency (Best) at 3.67.
-
-### Character Frequency Distribution
-![Character Frequency](data/char_freq_unique.png)
-
-This bar chart displays the frequency of each letter in the vocabulary, used for scoring words in the Unique Frequency mode.
-
-### Example Session
-
-```
-Welcome to WordMaster!
-I will suggest guesses. After each guess, enter feedback as 5 characters:
-G for green (correct letter, correct position)
-Y for yellow (correct letter, wrong position)
-X for gray (letter not in word)
-Example: GYXXG
-
-Attempt 1: Top suggested guesses:
-1. AROSE
-2. IRATE
-3. RAISE
-...
-Choose a guess by number (1-10) or 'quit' to stop: 1
-Enter feedback (or 'quit' to stop): YXYYX
-Remaining possible words: 234
-...
-```
+See an example session in [docs/example.md](docs/example.md).
 
 ## Project Structure
 
-- `main.py`: Main entry point for the Wordle assistant and interactive loop.
-- `play_wordle.py`: Standalone Wordle game simulator for practice.
-- `analyze_strategies.py`: Script to simulate and analyze different guessing strategies.
-- `plot_strategies.py`: Script to plot strategy analysis results.
-- `utils.py`: Core logic for word analysis, scoring, and filtering.
-- `plot.py`: Script to generate character frequency plots.
-- `plot.sh`: Script to set up environment and run plot.py.
-- `app/`: Web application directory.
-  - `app.py`: Flask web application for the interactive Wordle game.
-  - `templates/index.html`: HTML template for the web interface.
-  - `static/css/style.css`: CSS styles for the web interface.
-  - `static/js/script.js`: JavaScript for game logic and interactions.
-  - `Dockerfile`: Docker configuration for the web app.
-- `data/vocabularies.csv`: List of valid 5-letter words.
-- `data/word_scores.csv`: Pre-computed word scores (generated if needed).
-- `data/strategy_results.csv`: Results from strategy analysis (generated by analyze_strategies.py).
-- `data/char_freq_unique.png`: Character frequency visualization (unique) (generated if needed).
-- `data/success_rates_line.png`: Line chart of success rates by strategy (generated by plot_strategies.py).
-- `data/failed_games_line.png`: Line chart of failed games by strategy (generated by plot_strategies.py).
-- `data/average_guesses_line.png`: Line chart of average guesses by strategy (generated by plot_strategies.py).
-- `requirements.txt`: Python dependencies.
-- `docker-compose.yml`: Docker Compose configuration for running the web app.
+- [`main.py`](main.py): Main entry point for the Wordle assistant and interactive loop.
+- [`play_wordle.py`](play_wordle.py): Standalone Wordle game simulator for practice.
+- [`analyze_strategies.py`](analyze_strategies.py): Script to simulate and analyze different guessing strategies.
+- [`plot_strategies.py`](plot_strategies.py): Script to plot strategy analysis results.
+- [`utils.py`](utils.py): Core logic for word analysis, scoring, and filtering.
+- [`plot.py`](plot.py): Script to generate character frequency plots.
+- [`plot.sh`](plot.sh): Script to set up environment and run plot.py.
+- [`app/`](app/): Web application directory.
+  - [`app/app.py`](app/app.py): Flask web application for the interactive Wordle game.
+  - [`app/templates/index.html`](app/templates/index.html): HTML template for the web interface.
+  - [`app/static/css/style.css`](app/static/css/style.css): CSS styles for the web interface.
+  - [`app/static/js/script.js`](app/static/js/script.js): JavaScript for game logic and interactions.
+  - [`app/Dockerfile`](app/Dockerfile): Docker configuration for the web app.
+- [`data/vocabularies.csv`](data/vocabularies.csv): List of valid 5-letter words.
+- [`data/word_scores.csv`](data/word_scores.csv): Pre-computed word scores (generated if needed).
+- [`data/strategy_results.csv`](data/strategy_results.csv): Results from strategy analysis (generated by analyze_strategies.py).
+- [`data/char_freq_unique.png`](data/char_freq_unique.png): Character frequency visualization (unique) (generated if needed).
+- [`data/success_rates_line.png`](data/success_rates_line.png): Line chart of success rates by strategy (generated by plot_strategies.py).
+- [`data/failed_games_line.png`](data/failed_games_line.png): Line chart of failed games by strategy (generated by plot_strategies.py).
+- [`data/average_guesses_line.png`](data/average_guesses_line.png): Line chart of average guesses by strategy (generated by plot_strategies.py).
+- [`requirements.txt`](requirements.txt): Python dependencies.
+- [`docker-compose.yml`](docker-compose.yml): Docker Compose configuration for running the web app.
 
 ## How It Works
 
-1. **Vocabulary Loading**: Loads words from `data/vocabularies.csv`.
-2. **Character Analysis**: Analyzes frequency of unique characters across all words.
-3. **Word Scoring**: Scores each word based on the frequency of its unique letters.
-4. **Guess Suggestion**: Recommends highest-scoring words from remaining possibilities.
-5. **Filtering**: Uses Wordle feedback to eliminate impossible words:
-   - Green: Must match letter and position.
-   - Yellow: Must contain letter but not in that position.
-   - Gray: Must not contain letter (unless it's green elsewhere).
-
-This approach maximizes information gained per guess, helping you solve Wordle in fewer attempts.
+Learn how the algorithm works in [docs/how-it-works.md](docs/how-it-works.md).
 
 ## TODO
 
-- Make a GUI for both helper and game playing
+See upcoming features in [docs/todo.md](docs/todo.md).
 
