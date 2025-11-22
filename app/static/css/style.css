@@ -19,16 +19,18 @@ h1 {
 }
 
 #game-board {
-    display: grid;
+    display: flex;
+    justify-content: center;
     grid-template-rows: repeat(6, 1fr);
-    gap: 5px;
+    gap: 2px;
     margin: 20px;
 }
 
 .row {
-    display: grid;
+    display: flex;
+    justify-content: center;
     grid-template-columns: repeat(5, 1fr);
-    gap:5px;
+    gap:2px;
 }
 
 .letter {
