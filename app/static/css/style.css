@@ -80,6 +80,16 @@ button {
     font-size: 16px;
     margin-top: 10px;
     cursor: pointer;
+    border: none;
+    border-radius: 5px;
+    background-color: #6aaa64;
+    color: white;
+    font-weight: bold;
+    transition: background-color 0.2s;
+}
+
+button:hover {
+    background-color: #5a8f53;
 }
 
 #message {
@@ -91,27 +101,72 @@ button {
 #suggestions {
     margin-top: 20px;
     text-align: left;
+    border: 2px solid #ccc;
+    border-radius: 10px;
 }
 
 #suggestions summary {
     cursor: pointer;
     font-weight: bold;
+    background-color: #6aaa64;
+    color: white;
+    padding: 10px;
+    border-radius: 10px;
 }
 
 #suggestion-list {
     list-style-type: none;
     padding: 0;
+    display: block;
 }
 
 #suggestion-list li {
     background-color: #e0e0e0;
-    margin: 5px 0;
-    padding: 5px;
+    padding: 5px 10px;
     border-radius: 5px;
     cursor: pointer;
     transition: background-color 0.2s;
+    display: inline-block;
+    width: fit-content;
+    margin: 5px;
 }
 
 #suggestion-list li:hover {
     background-color: #d0d0d0;
+}
+
+.load-more {
+    background-color: #c9b458;
+    color: white;
+    display: block;
+    margin: 10px auto;
+    text-align: center;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    width: fit-content;
+}
+
+.load-more:hover {
+    background-color: #d4c25a;
+}
+
+#new-game-btn {
+    background-color: #6aaa64;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 12px 24px;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    margin-top: 20px;
+}
+
+#new-game-btn:hover {
+    background-color: #5a8f53;
 }

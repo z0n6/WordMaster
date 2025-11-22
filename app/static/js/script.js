@@ -61,7 +61,7 @@ document.addEventListener('DOMContentLoaded', function() {
         .then(data => {
             updateBoard(data.feedback);
             if (data.won) {
-                messageDiv.textContent = 'Congratulations! You won!';
+                messageDiv.textContent = 'Congratulations! You Won! 🏆';
                 const newGameBtn = document.createElement('button');
                 newGameBtn.id = 'new-game-btn';
                 newGameBtn.textContent = 'New Game';
@@ -114,14 +114,15 @@ document.addEventListener('DOMContentLoaded', function() {
                     });
                     suggestionList.appendChild(li);
                 });
+                // Remove existing more button
+                const existingMore = document.querySelector('.load-more');
+                if (existingMore) existingMore.remove();
                 if (data.suggestions.length >= 10 && data.count > 10) {
-                    const moreLi = document.createElement('li');
-                    moreLi.textContent = '---more---';
-                    moreLi.style.cursor = 'pointer';
-                    moreLi.style.textAlign = 'center';
-                    moreLi.style.fontWeight = 'bold';
-                    moreLi.addEventListener('click', loadMoreSuggestions);
-                    suggestionList.appendChild(moreLi);
+                    const moreBtn = document.createElement('button');
+                    moreBtn.textContent = 'More';
+                    moreBtn.classList.add('load-more');
+                    moreBtn.addEventListener('click', loadMoreSuggestions);
+                    document.getElementById('suggestions').appendChild(moreBtn);
                 }
                 document.querySelector('#suggestions summary').textContent = `Suggestions (${data.count})`;
             });
@@ -132,10 +133,9 @@ document.addEventListener('DOMContentLoaded', function() {
         fetch(`/suggestions?offset=${suggestionsOffset}&limit=10`)
             .then(response => response.json())
             .then(data => {
-                const moreLi = suggestionList.querySelector('li:last-child');
-                if (moreLi && moreLi.textContent === '---more---') {
-                    moreLi.remove();
-                }
+                // Remove existing more button
+                const existingMore = document.querySelector('.load-more');
+                if (existingMore) existingMore.remove();
                 data.suggestions.forEach(suggestion => {
                     const li = document.createElement('li');
                     li.textContent = suggestion;
@@ -147,13 +147,11 @@ document.addEventListener('DOMContentLoaded', function() {
                     suggestionList.appendChild(li);
                 });
                 if (data.suggestions.length >= 10 && suggestionsOffset + 10 < data.count) {
-                    const moreLi = document.createElement('li');
-                    moreLi.textContent = '---more---';
-                    moreLi.style.cursor = 'pointer';
-                    moreLi.style.textAlign = 'center';
-                    moreLi.style.fontWeight = 'bold';
-                    moreLi.addEventListener('click', loadMoreSuggestions);
-                    suggestionList.appendChild(moreLi);
+                    const moreBtn = document.createElement('button');
+                    moreBtn.textContent = 'More';
+                    moreBtn.classList.add('load-more');
+                    moreBtn.addEventListener('click', loadMoreSuggestions);
+                    document.getElementById('suggestions').appendChild(moreBtn);
                 }
             });
     }
