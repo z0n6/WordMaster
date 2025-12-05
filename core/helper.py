@@ -1,5 +1,6 @@
 import csv
 from collections import Counter
+from . import config
 
 # Frequency count criteria constants
 FREQ_TOTAL = 'total'
@@ -7,23 +8,87 @@ FREQ_REPEAT = 'repeat'
 FREQ_UNIQUE = 'unique'
 
 class WordleHelper:
-    def __init__(self, words=None, mode=FREQ_UNIQUE):
+    def __init__(self, words=None, mode=FREQ_UNIQUE, exclude_history=False, hybrid_mode=False):
+        # 1. 讀取基礎詞彙表
         if words is None:
             self.words = self.read_words()
         else:
             self.words = words
+            
         self.mode = mode
+        self.hybrid_mode = hybrid_mode
+        self.history_excluded = False  # 標記是否已經執行過排除
+
+        # 2. 如果是「純 Wordle 模式」，初始化時直接排除
+        # (如果是混合模式，初始化時先不排除，等第二回合再做)
+        if exclude_history and not hybrid_mode:
+            self.exclude_past_answers()
+            print(f"[Mode] Pure Wordle Mode: Past answers excluded from start.")
+        elif hybrid_mode:
+            print(f"[Mode] Hybrid Mode: Past answers will be excluded after the 1st guess.")
+
+        # 3. 初始化分數
         self.char_count = self.analyze_freq()
         self.word_scores = self.score(self.mode, self.words, self.char_count)
 
-    @staticmethod
-    def read_words(filename='data/vocabularies.csv'):
-        with open(filename, 'r') as f:
-            reader = csv.reader(f)
-            row = next(reader)
-            words = [word.strip() for word in row if word.strip()]
-        return words
+    def exclude_past_answers(self):
+        """讀取並排除過往答案的核心邏輯"""
+        if self.history_excluded:
+            return  # 避免重複執行
 
+        past_answers = self.read_past_answers()
+        if not past_answers:
+            return
+
+        original_count = len(self.words)
+        # 過濾掉已經出現過的字
+        self.words = [w for w in self.words if w not in past_answers]
+        self.history_excluded = True
+        
+        # 資料變動後，必須重新計算頻率與分數
+        self.char_count = self.analyze_freq()
+        self.word_scores = self.score(self.mode, self.words, self.char_count)
+
+        print(f"\n[Strategy Update] Loaded {len(past_answers)} past answers.")
+        print(f"[Strategy Update] Vocabulary reduced from {original_count} to {len(self.words)} words.")
+
+    @staticmethod
+    def read_words(filename=None):
+        target_path = filename if filename else config.VOCAB_PATH
+        try:
+            with open(target_path, 'r', encoding='utf-8') as f:
+                reader = csv.reader(f)
+                try:
+                    row = next(reader)
+                    words = [word.strip() for word in row if word.strip()]
+                except StopIteration:
+                    words = []
+            return words
+        except FileNotFoundError:
+            print(f"Error: Vocabulary file not found at {target_path}")
+            return []
+
+    @staticmethod
+    def read_past_answers():
+        """讀取過往答案 (格式：單行，以逗號分隔)"""
+        target_path = config.PAST_ANSWERS_PATH
+        past_answers = set()
+        
+        if target_path.exists():
+            try:
+                with open(target_path, 'r', encoding='utf-8') as f:
+                    content = f.read().strip()
+                    if content:
+                        words = content.split(',')
+                        past_answers = {w.strip().upper() for w in words if w.strip()}
+            except Exception as e:
+                print(f"Warning: Failed to read past answers: {e}")
+        else:
+            print(f"Warning: Past answers file not found at {target_path}")
+            
+        return past_answers
+
+    # --- 分析與評分邏輯 (保持不變) ---
     def analyze_freq(self):
         char_count = None
         if self.mode == FREQ_TOTAL:
@@ -94,46 +159,8 @@ class WordleHelper:
         for word, score in self.word_scores[:top_n]:
             print(f"{word}: {score}")
         print()
-
-    def plot_char_freq(self, output_file='data/char_freq.png'):
-        import matplotlib.pyplot as plt
-        sorted_char_count = sorted(self.char_count.items(), key=lambda x: x[1], reverse=True)
-        sorted_chars, sorted_freqs = zip(*sorted_char_count)
-        plt.figure(figsize=(16, 6))
-        if any(len(key) > 1 for key in sorted_chars):
-            plt.xticks(rotation=45, ha='center')
-        plt.bar(sorted_chars, sorted_freqs)
-        plt.xlabel('Characters')
-        plt.ylabel('Frequency')
-        plt.title('Character Frequency in Vocabularies')
-        plt.tight_layout()
-        plt.savefig(output_file)
-        plt.close()
-
-    @staticmethod
-    def save_word_scores(word_scores, filename='data/word_scores.csv'):
-        with open(filename, 'w') as f:
-            f.write("word,score\n")
-            for word, score in word_scores:
-                f.write(f"{word},{score}\n")
-
-    @staticmethod
-    def load_word_scores(filename='data/word_scores.csv'):
-        word_scores = []
-        with open(filename, 'r') as f:
-            reader = csv.reader(f)
-            next(reader)  # Skip header
-            for row in reader:
-                word, score = row
-                word_scores.append((word, int(score)))
-        return word_scores
-
+    
     def filter_words(self, guess, feedback):
-        """
-        Filter words based on Wordle feedback.
-        guess: 5-letter string
-        feedback: 5-character string, G=green, Y=yellow, X=gray
-        """
         filtered = []
         for word in self.words:
             word = word.upper()
@@ -162,11 +189,7 @@ class WordleHelper:
         if not quiet:
             print("Welcome to WordMaster!")
             print("I will suggest guesses. After each guess, enter feedback as 5 characters:")
-            print("G for green (correct letter, correct position)")
-            print("Y for yellow (correct letter, wrong position)")
-            print("X for gray (letter not in word)")
             print("Example: GYXXG")
-            print("You can choose from suggested guesses or enter your own 5-letter word.")
             print()
 
         won = False
@@ -174,6 +197,11 @@ class WordleHelper:
             if not self.words:
                 print("No possible words left!")
                 break
+
+            # --- 混合模式邏輯：第 2 回合前排除歷史答案 ---
+            if self.hybrid_mode and attempt == 2:
+                self.exclude_past_answers()
+            # ----------------------------------------
 
             top_guesses = self.get_top_guesses(num_suggestions)
             if quiet:
@@ -189,9 +217,9 @@ class WordleHelper:
 
                 guess = None
                 while True:
-                    choice = input(f"Choose a guess by number (1-{num_suggestions}), enter a 5-letter word, or 'quit' to stop: ").strip()
+                    choice = input(f"Choose a guess (1-{num_suggestions}), enter word, or 'quit': ").strip()
                     if choice.upper() == 'QUIT':
-                        won = True  # to prevent printing possible words
+                        won = True
                         break
                     try:
                         if choice.isalpha() and len(choice) == 5:
@@ -201,23 +229,19 @@ class WordleHelper:
                         if 1 <= choice_num <= len(top_guesses):
                             guess = top_guesses[choice_num - 1]
                             break
-                        else:
-                            print(f"Please enter a number between 1 and {len(top_guesses)}.")
                     except ValueError:
-                        print("Invalid input. Please enter a number or 'quit'.")
+                        pass
+                    print("Invalid input.")
 
                 if choice.upper() == 'QUIT':
                     break
 
-                if guess is None:
-                    continue  # shouldn't happen, but safety
-
-            prompt = "" if quiet else "Enter feedback (or 'quit' to stop): "
+            prompt = "" if quiet else "Enter feedback (or 'quit'): "
             feedback = input(prompt).strip().upper()
             if feedback == 'QUIT':
                 break
             if len(feedback) != 5 or not all(c in 'GYX' for c in feedback):
-                print("Invalid feedback. Please enter 5 characters: G, Y, or X.")
+                print("Invalid feedback. Use G, Y, X.")
                 continue
 
             if feedback == 'GGGGG':
@@ -233,53 +257,3 @@ class WordleHelper:
 
         if not won and self.words:
             print("Out of attempts. Possible words:", self.words[:10])
-
-# Backward compatibility functions
-# def read_words(filename='data/vocabularies.csv'):
-    # return WordleHelper.read_words(filename)
-
-# def analyze_char_freq(words):
-    # return WordleHelper._analyze_char_freq(words)
-
-# def analyze_repeat_char_freq(words):
-    # return WordleHelper._analyze_repeat_char_freq(words)
-
-# def analyze_unique_char_freq(words):
-    # return WordleHelper._analyze_unique_char_freq(words)
-
-# def score_words(words, char_count):
-    # helper = WordleHelper(words)
-    # helper.char_counts[FREQ_UNIQUE] = char_count
-    # return helper.score(words, FREQ_UNIQUE)
-
-# def score_words_with_repeat_characters(words, char_count):
-    # helper = WordleHelper(words)
-    # helper.char_counts[FREQ_REPEAT] = char_count
-    # return helper.score(words, FREQ_REPEAT)
-
-# def print_word_scores(word_scores, top_n=20):
-    # WordleHelper.print_word_scores(word_scores, top_n)
-
-# def save_word_scores(word_scores, filename='data/word_scores.csv'):
-    # WordleHelper.save_word_scores(word_scores, filename)
-
-# def load_word_scores(filename='data/word_scores.csv'):
-    # return WordleHelper.load_word_scores(filename)
-
-# def filter_words(words, guess, feedback):
-    # helper = WordleHelper(words)
-    # return helper.filter_words(words, guess, feedback)
-
-# def get_best_guess(words, char_count):
-    # helper = WordleHelper(words)
-    # helper.char_counts[FREQ_REPEAT] = char_count
-    # return helper.get_best_guess(words, FREQ_REPEAT)
-
-# def get_top_guesses(words, char_count, top_n=10):
-    # helper = WordleHelper(words)
-    # helper.char_counts[FREQ_REPEAT] = char_count
-    # return helper.get_top_guesses(words, FREQ_REPEAT, top_n)
-
-if __name__ == "__main__":
-    helper = WordleHelper()
-    helper.print_word_scores()

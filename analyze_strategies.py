@@ -40,6 +40,8 @@ def simulate_game(secret, mode, random_top=None):
 
 def main():
     words = WordleHelper.read_words()
+    answers = WordleHelper.read_words('data/answers.csv')
+    possible = [word for word in words if word not in answers]
     modes = [FREQ_TOTAL, FREQ_REPEAT, FREQ_UNIQUE]
     mode_names = {
         FREQ_TOTAL: 'Total Frequency',
@@ -50,15 +52,15 @@ def main():
     for mode in modes:
         strategies.append((mode, None, f"{mode_names[mode]} (Best)"))
         strategies.append((mode, 3, f"{mode_names[mode]} (Random Top 3)"))
-        strategies.append((mode, 5, f"{mode_names[mode]} (Random Top 5)"))
-        strategies.append((mode, 10, f"{mode_names[mode]} (Random Top 10)"))
+        # strategies.append((mode, 5, f"{mode_names[mode]} (Random Top 5)"))
+        # strategies.append((mode, 10, f"{mode_names[mode]} (Random Top 10)"))
 
     results = {strategy[2]: [] for strategy in strategies}
 
     print("Analyzing strategies... This may take a few minutes.")
     for mode, random_top, name in strategies:
         print(f"Simulating {name} strategy...")
-        for secret in words:
+        for secret in possible:
             guesses = simulate_game(secret, mode, random_top)
             results[name].append(guesses)
 

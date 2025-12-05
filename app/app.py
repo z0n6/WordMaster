@@ -1,6 +1,11 @@
 from flask import Flask, render_template, request, session, jsonify
 import random
-from utils import WordleHelper
+import sys
+import os
+
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
+from core.helper import WordleHelper
 from play_wordle import get_feedback
 
 app = Flask(__name__)
