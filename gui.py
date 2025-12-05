@@ -4,13 +4,13 @@ import threading
 
 # 引用您的核心模組
 try:
-    from core.helper import WordleHelper
+    from core.helper import WordleHelper, FREQ_ENTROPY
 except ImportError:
     # fallback if run from inside a folder
     import sys
     import os
     sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-    from core.helper import WordleHelper
+    from core.helper import WordleHelper, FREQ_ENTROPY
 
 class WordleSolverGUI:
     def __init__(self, root):
@@ -261,6 +261,18 @@ class WordleSolverGUI:
             if feedback_str == "GGGGG":
                 messagebox.showinfo("Success", f"Congratulations! Word found: {guess}")
                 self.status_var.set("Solved!")
+
+                should_save = messagebox.askyesno(
+                    "Update History", 
+                    f"Do you want to add '{guess}' to the past answers list?\n(This will exclude it from future games)"
+                )
+                
+                if should_save:
+                    success, msg = self.helper.save_new_answer(guess)
+                    if success:
+                        messagebox.showinfo("History Updated", msg)
+                    else:
+                        messagebox.showwarning("Update Skipped", msg)
             else:
                 current_msg = self.status_var.get().split('.')[0]
                 self.status_var.set(f"{current_msg}. Remaining words: {remaining}")
