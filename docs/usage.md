@@ -3,46 +3,56 @@
 ### Prerequisites
 
 - Python 3.x
-- `matplotlib` library (only required for plotting functionality)
+- `tkinter` (usually included with Python)
+- `matplotlib` (optional, for plotting)
 
-### Installation and Setup
+### Graphical Interface (GUI)
 
-1. Clone or download this project to your local machine.
-2. Navigate to the project directory.
-3. (Optional) Install dependencies for plotting functionality:
+The easiest way to use WordMaster is via the desktop app.
+
+1. **Run the App**:
 
     ```bash
-    pip install -r requirements.txt
+    python gui.py
     ```
 
-### Playing with the Bot
+2. Select Mode: Choose "Hybrid (Recommended)" from the right panel.
 
-1. **Start the Program**: Run `python main.py`.
+3. Input Guess: Type your guess in the "Word" field or click a word from the "Top Suggestions" list.
 
-2. **Understand Feedback Codes**:
-   - `G`: Green - Correct letter in correct position
-   - `Y`: Yellow - Correct letter in wrong position
-   - `X`: Gray - Letter not in the word
+4. Set Feedback:
+   - Click the colored blocks to match the Wordle feedback.
+   - Click once for Yellow, twice for Green, again to reset to Gray.
 
-3. **Gameplay Loop**:
-   - The bot displays the top 10 suggested guesses.
-   - Choose a guess by entering its number (1-10).
-   - Play that word on Wordle.
-   - Enter the feedback as a 5-character string (e.g., `GYXXG`).
-   - The bot filters possible words and suggests new guesses.
-   - Repeat until you win or run out of attempts.
+5. Submit: Click "Submit Feedback".
 
-4. **Winning**: If you enter `GGGGG`, the bot congratulates you.
+6. Update History: When you win (GGGGG), the app will ask if you want to save the word to data/answers.csv. Click "Yes" to exclude it from future games.
 
-5. **Quitting**: Type `quit` at any prompt to exit.
+### Command Line Interface (CLI)
 
-### Playing Wordle (Practice Mode)
+For power users or scripting.
 
-For practice or to play Wordle without the assistant:
+Basic Usage:
 
-1. Run `python play_wordle.py` (after setting up the environment).
-2. Guess 5-letter words and receive feedback.
-3. Use `--quiet` flag for minimal output (useful for scripting).
+```bash
+python main.py --hybrid
+```
+
+Arguments:
+
+- `--hybrid`: (Recommended) Excludes past answers starting from the 2nd guess. Balances information gathering and answer targeting.
+- `--wordle`: Excludes past answers from the 1st guess. Good if you are sure the answer hasn't appeared yet.
+- `--algo {entropy,unique}`: Choose the scoring algorithm.
+  - `entropy`: Uses Global Information Entropy (slower but smarter).
+  - `unique`: Uses Character Frequency (faster).
+- `--num_suggestions N`: Show top N suggestions.
+- `--quiet`: Minimal output mode.
+
+Example Session:
+
+```bash
+python main.py --hybrid --algo entropy
+```
 
 ### Web Interface
 
